@@ -1,0 +1,17 @@
+virtualenv venv
+
+git init
+dvc init 
+
+
+dvc remote add -d dvc-remote ./.dvc/tmp/dvc-storage 
+
+# cada vez que se realiza un cambio en el dataset
+dvc add .\data_raw\data_fifa_players.json
+dvc push
+
+git add .
+
+git commit -m "Add raw data"
+
+
