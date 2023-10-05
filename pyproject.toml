@@ -11,8 +11,8 @@ disable = [
     "unspecified-encoding",
     "logging-fstring-interpolation",
     "useless-return",
-    "consider-using-with"
-
+    "consider-using-with",
+    "no-member"
 ]
 
 [tool.black]

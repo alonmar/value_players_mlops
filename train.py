@@ -2,7 +2,6 @@ import json
 
 # logging
 import logging
-import pathlib
 
 import numpy as np
 import mlflow
@@ -13,8 +12,11 @@ from prefect import flow, task
 
 # Models
 from xgboost import XGBRegressor
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
 from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, StandardScaler
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 
 logging.basicConfig(level=logging.INFO)
@@ -24,6 +26,7 @@ logging.basicConfig(level=logging.INFO)
 def read_data() -> pd.DataFrame:
     """Read data into DataFrame"""
     df = pd.read_json("data_raw/data_fifa_players.json")
+    df = df.drop(columns=["url"])
     return df
 
 
@@ -91,7 +94,6 @@ def one_hot_coding(df):
 
 @task
 def clean_data(df):
-    df = df.drop(columns=["url"])
     df = df.dropna().copy()
     df = change_data_types(df)
     df = get_position_zone(df)
@@ -108,21 +110,52 @@ def split_data(df, tsize=0.2):
     y = np.log(y)
     y = y.reshape(-1, 1)
     X = df.drop(columns=["Value"])  # Feature(s)
-    scaler = StandardScaler()
-    X_scaler = scaler.fit(X)
-    X = X_scaler.transform(X)
-    y_scaler = scaler.fit(y)
-    y = y_scaler.transform(y)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=tsize, random_state=3
     )
 
-    return X_train, X_test, y_train, y_test, y_scaler
+    return X_train, X_test, y_train, y_test
+
+
+def data_pipline(X_train):
+    # Para el escalado de las variables numericas usaremos MinMaxScaler
+    # y como lo mensionamos anterirormente usaremos el promedio para la imputación
+    numeric_pipeline = Pipeline(
+        steps=[
+            ('impute', SimpleImputer(strategy='mean')),
+            ('StandardScaler', StandardScaler()),
+            ('scale', MinMaxScaler()),
+        ]
+    )
+    # handle_unknown='ignore' es importante en caso de tomar una categoria que no se encontraba
+    # durante el proceso de entrenamiento
+    categorical_pipeline = Pipeline(
+        steps=[('one-hot', OneHotEncoder(handle_unknown='ignore', sparse=False))]
+    )
+    # diferenciamos varibles numericas y las que no los son
+    numerical_features = X_train.select_dtypes(include=['number']).columns
+    categorical_features = X_train.select_dtypes(exclude=['number']).columns
+    full_processor = ColumnTransformer(
+        transformers=[
+            ('number', numeric_pipeline, numerical_features),
+            ('category', categorical_pipeline, categorical_features),
+        ]
+    )
+
+    return full_processor
+
+
+def load_parametres() -> dict:
+    parameters_path = "parametres.json"
+    f = open(parameters_path)
+    parameters = json.load(f)
+    mlflow.log_artifact(parameters_path, artifact_path="parametres")
+    return parameters
 
 
 @task(log_prints=True)
-def train_best_model(X_train, X_test, y_train, y_test, y_scaler) -> None:
+def train_best_model(X_train, X_test, y_train, y_test) -> None:
     """train a model with best hyperparams and write everything out"""
 
     with mlflow.start_run():
@@ -139,32 +172,33 @@ def train_best_model(X_train, X_test, y_train, y_test, y_scaler) -> None:
         # }
 
         # Read parametres
-        f = open("parametres.json")
-        parameters = json.load(f)
+        parameters = load_parametres()
 
-        mlflow.log_artifact("parametres.json", artifact_path="parametres")
+        # pipline
+        full_processor = data_pipline(X_train)
 
         xgb_model = XGBRegressor(seed=20)
         xgb_grid = RandomizedSearchCV(estimator=xgb_model, **parameters)
-        model = xgb_grid.fit(X_train, y_train)
-        mlflow.log_params(model.best_params_)
-
+        xgb_pipeline = Pipeline(
+            steps=[('preprocess', full_processor), ('model', xgb_grid)]
+        )
+        model = xgb_pipeline.fit(X_train, y_train)
+        mlflow.log_params(model['model'].best_params_)
         # accuracy = model.score(X_test, y_test)
         predictions = model.predict(X_test)
-
-        logging.debug(f"fit_model.best_params: {model.best_params_}")
+        logging.debug(f"fit_model.best_params: {model['model'].best_params_}")
         rmse_xgb_reg = mean_squared_error(
-            y_scaler.inverse_transform(y_test),
-            y_scaler.inverse_transform(predictions.reshape(-1, 1)),
+            y_test,
+            predictions.reshape(-1, 1),
             squared=False,
         )
 
-        # logging(f"The RMSE for xgb_reg is: {rmse_xgb_reg}")
-        # logging(f"Best params are: {model.best_params_}")
+        logging.debug(f"The RMSE for xgb_reg is: {rmse_xgb_reg}")
+        logging.debug(f"Best params are: {model['model'].best_params_}")
 
         mlflow.log_metric("rmse", rmse_xgb_reg)
 
-        pathlib.Path("models").mkdir(exist_ok=True)
+        # pathlib.Path("models").mkdir(exist_ok=True)
 
         mlflow.sklearn.log_model(model, artifact_path="models_mlflow")
         print(f"default artifacts URI: '{mlflow.get_artifact_uri()}'")
@@ -186,13 +220,13 @@ def main_flow() -> None:
 
     df = clean_data(df)
 
-    X_train, X_test, y_train, y_test, y_scaler = split_data(
+    X_train, X_test, y_train, y_test = split_data(
         df,
         tsize=0.2,
     )
 
     # Train
-    train_best_model(X_train, X_test, y_train, y_test, y_scaler)
+    train_best_model(X_train, X_test, y_train, y_test)
 
 
 if __name__ == "__main__":
