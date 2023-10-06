@@ -15,7 +15,7 @@ def load_model(run_id):
     return model
 
 
-def human_readable_payload(value_predict):
+def human_readable_payload(value_predict, run_id):
     """Takes numpy array and returns back human readable dictionary"""
 
     value_log = float(np.round(value_predict, 2))
@@ -23,6 +23,7 @@ def human_readable_payload(value_predict):
     result = {
         "value_log": value_log,
         "value_money": f"{value_stimate} euros",
+        "run_id": run_id,
     }
     return result
 
@@ -34,5 +35,5 @@ def predict(pX: dict, run_id: str) -> dict:
     df = pd.DataFrame(pX)
     prediction = model.predict(df)
 
-    result = human_readable_payload(prediction)
+    result = human_readable_payload(prediction, run_id)
     return result
