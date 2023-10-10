@@ -1,6 +1,6 @@
 import pandas as pd
 
-from train import get_position_zone
+from src.train import get_position_zone
 
 
 def test_get_position_zone():
@@ -12,4 +12,5 @@ def test_get_position_zone():
     # Create DataFrame
     df = pd.DataFrame(data)
     result = get_position_zone(df)
+    # pylint: disable=unsubscriptable-object
     assert ["ATTACKING", "MIDFIELD", "DEFENDING"] == result["position_zone"].tolist()

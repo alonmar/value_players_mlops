@@ -1,36 +1,32 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
-  hooks:
-    - id: trailing-whitespace
-    - id: end-of-file-fixer
-    - id: check-yaml
-    - id: check-added-large-files
-      args: ['--maxkb=1500']
-- repo: https://github.com/psf/black
-  rev: 23.9.1
-  hooks:
-    - id: black
-      language_version: python3.10
-- repo: https://github.com/pycqa/isort
-  rev: 5.12.0
-  hooks:
-    - id: isort
-      name: isort (python)
-      exclude: site-packages/
-      args: ["--profile", "black"]
-- repo: local
-  hooks:
-    - id: pylint
-      name: pylint
-      entry: pylint
-      language: system
-      types: [python]
-      args: [
-        "-rn", # Only display messages
-        "-sn", # Don't display the score
-        "--verbose"
-      ]
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-merge-conflict
+    -   id: check-yaml
+    -   id: check-added-large-files
+        args: ['--maxkb=1000']
+        exclude: "notebooks"
+    -   id: check-yaml
+        exclude: "mkdocs.yml"
+-   repo: local
+    hooks:
+    -   id: style
+        name: style
+        entry: make
+        args: ["style"]
+        language: system
+        pass_filenames: false
+-   repo: https://github.com/pycqa/pylint
+    rev: v3.0.1
+    hooks:
+    -   id: pylint
+        args:
+        - --errors-only
 - repo: local
   hooks:
     - id: pytest-check

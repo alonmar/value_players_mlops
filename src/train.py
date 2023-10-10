@@ -1,38 +1,40 @@
 import json
 
-# logging
-import logging
-
-import numpy as np
 import mlflow
+import numpy as np
 
 # Data management
 import pandas as pd
 from prefect import flow, task
-
-# Models
-from xgboost import XGBRegressor
-from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, StandardScaler
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
 
-logging.basicConfig(level=logging.INFO)
+# Models
+# pylint: disable=no-name-in-module
+from xgboost import XGBRegressor
+
+from src.config import logger
+
+# logging
 
 
 @task(retries=3, retry_delay_seconds=2)
 def read_data() -> pd.DataFrame:
-    """Read data into DataFrame"""
+    """Read data into DataFrame
+
+    Returns:
+        pd.DataFrame: _description_
+    """
     df = pd.read_json("data_raw/data_fifa_players.json")
     df = df.drop(columns=["url"])
     return df
 
 
-def change_data_types(df):
-    """change data types for better manage"""
-
+def change_data_types(df: pd.DataFrame) -> pd.DataFrame:
     # cm
     df["height"] = df["height"].str.extract("(\\d+)").astype(int)
     # kg
@@ -111,9 +113,7 @@ def split_data(df, tsize=0.2):
     y = y.reshape(-1, 1)
     X = df.drop(columns=["Value"])  # Feature(s)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=tsize, random_state=3
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=tsize, random_state=3)
 
     return X_train, X_test, y_train, y_test
 
@@ -123,23 +123,22 @@ def data_pipline(X_train):
     # y como lo mensionamos anterirormente usaremos el promedio para la imputación
     numeric_pipeline = Pipeline(
         steps=[
-            ('impute', SimpleImputer(strategy='mean')),
-            ('StandardScaler', StandardScaler()),
-            ('scale', MinMaxScaler()),
+            ("impute", SimpleImputer(strategy="mean")),
+            ("StandardScaler", StandardScaler()),
+            ("scale", MinMaxScaler()),
         ]
     )
     # handle_unknown='ignore' es importante en caso de tomar una categoria que no se encontraba
     # durante el proceso de entrenamiento
-    categorical_pipeline = Pipeline(
-        steps=[('one-hot', OneHotEncoder(handle_unknown='ignore', sparse=False))]
-    )
+    # pylint: disable=line-too-long
+    categorical_pipeline = Pipeline(steps=[("one-hot", OneHotEncoder(handle_unknown="ignore", sparse=False))])
     # diferenciamos varibles numericas y las que no los son
-    numerical_features = X_train.select_dtypes(include=['number']).columns
-    categorical_features = X_train.select_dtypes(exclude=['number']).columns
+    numerical_features = X_train.select_dtypes(include=["number"]).columns
+    categorical_features = X_train.select_dtypes(exclude=["number"]).columns
     full_processor = ColumnTransformer(
         transformers=[
-            ('number', numeric_pipeline, numerical_features),
-            ('category', categorical_pipeline, categorical_features),
+            ("number", numeric_pipeline, numerical_features),
+            ("category", categorical_pipeline, categorical_features),
         ]
     )
 
@@ -179,22 +178,20 @@ def train_best_model(X_train, X_test, y_train, y_test) -> None:
 
         xgb_model = XGBRegressor(seed=20)
         xgb_grid = RandomizedSearchCV(estimator=xgb_model, **parameters)
-        xgb_pipeline = Pipeline(
-            steps=[('preprocess', full_processor), ('model', xgb_grid)]
-        )
+        xgb_pipeline = Pipeline(steps=[("preprocess", full_processor), ("model", xgb_grid)])
         model = xgb_pipeline.fit(X_train, y_train)
-        mlflow.log_params(model['model'].best_params_)
+        mlflow.log_params(model["model"].best_params_)
         # accuracy = model.score(X_test, y_test)
         predictions = model.predict(X_test)
-        logging.debug(f"fit_model.best_params: {model['model'].best_params_}")
+        logger.debug(f"fit_model.best_params: {model['model'].best_params_}")
         rmse_xgb_reg = mean_squared_error(
             y_test,
             predictions.reshape(-1, 1),
             squared=False,
         )
 
-        logging.debug(f"The RMSE for xgb_reg is: {rmse_xgb_reg}")
-        logging.debug(f"Best params are: {model['model'].best_params_}")
+        logger.debug(f"The RMSE for xgb_reg is: {rmse_xgb_reg}")
+        logger.debug(f"Best params are: {model['model'].best_params_}")
 
         mlflow.log_metric("rmse", rmse_xgb_reg)
 

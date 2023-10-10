@@ -2,9 +2,9 @@
 
 import json
 
+import pandas as pd
 import rich
 import typer
-import pandas as pd
 
 from predict import predict
 
