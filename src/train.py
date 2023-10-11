@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 import mlflow
 import numpy as np
@@ -35,6 +36,15 @@ def read_data() -> pd.DataFrame:
 
 
 def change_data_types(df: pd.DataFrame) -> pd.DataFrame:
+    """_summary_
+
+    Args:
+        df (pd.DataFrame): _description_
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+
     # cm
     df["height"] = df["height"].str.extract("(\\d+)").astype(int)
     # kg
@@ -46,8 +56,15 @@ def change_data_types(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def get_position_zone(df):
-    """Transform 'preferred_positions' to 'position_zone'"""
+def get_position_zone(df: pd.DataFrame) -> pd.DataFrame:
+    """Transform 'preferred_positions' to 'position_zone'
+
+    Args:
+        df (pd.DataFrame): _description_
+
+    Returns:
+        pd.DataFrame: _description_
+    """
     position_zone = []
     for x in df["preferred_positions"]:
         listb = {"DEFENDING": 0, "MIDFIELD": 0, "ATTACKING": 0, "GOALKEEPER": 0}
@@ -71,9 +88,16 @@ def get_position_zone(df):
     return df
 
 
-def one_hot_coding(df):
+def one_hot_coding(df: pd.DataFrame) -> pd.DataFrame:
     """Conver columns type 'object' to one hot coding, then
-    delete leaving only the One hot coding"""
+    delete leaving only the One hot coding
+
+    Args:
+        df (pd.DataFrame): _description_
+
+    Returns:
+        pd.DataFrame: _description_
+    """
     dummies_object = None
     columns_type_object = []
 
@@ -95,7 +119,7 @@ def one_hot_coding(df):
 
 
 @task
-def clean_data(df):
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.dropna().copy()
     df = change_data_types(df)
     df = get_position_zone(df)
@@ -106,7 +130,7 @@ def clean_data(df):
 
 
 @task
-def split_data(df, tsize=0.2):
+def split_data(df: pd.DataFrame, tsize=0.2) -> list:
     y = df["Value"].values  # Target
     # Transform to log
     y = np.log(y)
@@ -118,7 +142,7 @@ def split_data(df, tsize=0.2):
     return X_train, X_test, y_train, y_test
 
 
-def data_pipline(X_train):
+def data_pipline(X_train: pd.DataFrame) -> ColumnTransformer:
     # Para el escalado de las variables numericas usaremos MinMaxScaler
     # y como lo mensionamos anterirormente usaremos el promedio para la imputación
     numeric_pipeline = Pipeline(
@@ -145,7 +169,7 @@ def data_pipline(X_train):
     return full_processor
 
 
-def load_parametres() -> dict:
+def load_parametres() -> Dict:
     parameters_path = "parametres.json"
     f = open(parameters_path)
     parameters = json.load(f)
@@ -155,7 +179,17 @@ def load_parametres() -> dict:
 
 @task(log_prints=True)
 def train_best_model(X_train, X_test, y_train, y_test) -> None:
-    """train a model with best hyperparams and write everything out"""
+    """train a model with best hyperparams and write everything out
+
+    Args:
+        X_train (_type_): _description_
+        X_test (_type_): _description_
+        y_train (_type_): _description_
+        y_test (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
 
     with mlflow.start_run():
         # parameters = {

@@ -10,7 +10,12 @@ from predict import predict
 
 
 def main(skills: str, run_id: str):
-    """Predicts Value of an Fifa player based on skills"""
+    """Predicts Value of an Fifa player based on skills
+
+    Args:
+        skills (str): _description_
+        run_id (str): _description_
+    """
     data_to_predict = json.loads(skills)
     data_to_predict = pd.DataFrame(data_to_predict)
 
