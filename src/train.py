@@ -192,18 +192,6 @@ def train_best_model(X_train, X_test, y_train, y_test) -> None:
     """
 
     with mlflow.start_run():
-        # parameters = {
-        #    "param_distributions": {
-        #        "max_depth": [3, 6, 10],
-        #        "learning_rate": [0.01, 0.05, 0.1, 0.3, 0.5],
-        #        "n_estimators": [100, 500, 1000],
-        #        "colsample_bytree": [0.7, 0.5],
-        #    },
-        #    "scoring": "neg_mean_squared_error",
-        #    "verbose": 3,
-        #    "n_jobs": -1,
-        # }
-
         # Read parametres
         parameters = load_parametres()
 
