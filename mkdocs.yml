@@ -1,0 +1,15 @@
+site_name: Value player
+site_url: https://github.com/alonmar/Fifa-players-predict-value/blob/main/Makefile
+repo_url: https://github.com/GokuMohandas/Made-With-ML/
+nav:
+  - Home: index.md
+  - Value Players:
+    - Train: valueplayers/train.md
+    - Predict: valueplayers/predict.md
+    - config: valueplayers/config.md
+    - cli: valueplayers/cli.md
+theme: readthedocs
+plugins:
+  - mkdocstrings
+watch:
+  - .  # reload docs for any file changes
