@@ -30,3 +30,4 @@ prefect server start
 # docu
 python -m pip install "mkdocstrings[python]"
 python -m mkdocs serve
+mkdocs build

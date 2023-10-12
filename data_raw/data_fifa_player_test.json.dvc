@@ -1,0 +1,5 @@
+outs:
+- md5: 22a967d61be115ce0fd13d8e6c57480a
+  size: 2700443
+  hash: md5
+  path: data_fifa_player_test.json

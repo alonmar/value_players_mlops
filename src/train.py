@@ -30,7 +30,7 @@ def read_data() -> pd.DataFrame:
     Returns:
         pd.DataFrame: _description_
     """
-    df = pd.read_json("data_raw/data_fifa_players.json")
+    df = pd.read_json("data_raw/data_fifa_player_train.json")
     df = df.drop(columns=["url"])
     return df
 
