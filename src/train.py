@@ -6,6 +6,7 @@ import numpy as np
 
 # Data management
 import pandas as pd
+import typer
 from prefect import flow, task
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -18,7 +19,7 @@ from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, StandardScaler
 # pylint: disable=no-name-in-module
 from xgboost import XGBRegressor
 
-from src.config import logger
+from src import config
 
 # logging
 
@@ -205,15 +206,15 @@ def train_best_model(X_train, X_test, y_train, y_test) -> None:
         mlflow.log_params(model["model"].best_params_)
         # accuracy = model.score(X_test, y_test)
         predictions = model.predict(X_test)
-        logger.debug(f"fit_model.best_params: {model['model'].best_params_}")
+        config.logger.debug(f"fit_model.best_params: {model['model'].best_params_}")
         rmse_xgb_reg = mean_squared_error(
             y_test,
             predictions.reshape(-1, 1),
             squared=False,
         )
 
-        logger.debug(f"The RMSE for xgb_reg is: {rmse_xgb_reg}")
-        logger.debug(f"Best params are: {model['model'].best_params_}")
+        config.logger.debug(f"The RMSE for xgb_reg is: {rmse_xgb_reg}")
+        config.logger.debug(f"Best params are: {model['model'].best_params_}")
 
         mlflow.log_metric("rmse", rmse_xgb_reg)
 
@@ -249,4 +250,4 @@ def main_flow() -> None:
 
 
 if __name__ == "__main__":
-    main_flow()
+    typer.run(main_flow)
