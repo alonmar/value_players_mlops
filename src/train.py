@@ -6,7 +6,6 @@ import numpy as np
 
 # Data management
 import pandas as pd
-import typer
 from prefect import flow, task
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -250,4 +249,4 @@ def main_flow() -> None:
 
 
 if __name__ == "__main__":
-    typer.run(main_flow)
+    main_flow()

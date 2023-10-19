@@ -8,7 +8,7 @@ TRACKING_URL = "http://127.0.0.1:5000"
 
 MLFLOW_TRACKING_URI = "sqlite:///mlflow.db"
 
-mlflow.set_tracking_uri(TRACKING_URL)
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
 
 def load_model(run_id: str):
