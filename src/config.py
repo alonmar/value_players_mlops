@@ -8,6 +8,7 @@ ROOT_DIR = "."
 LOGS_DIR = Path(ROOT_DIR, "logs")
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
+RUN_ID = "fdd029d6a560451d80836002e7465914"
 
 # Config MLflow
 # MODEL_REGISTRY = Path(f"{EFS_DIR}/mlflow")

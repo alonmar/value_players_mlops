@@ -46,7 +46,7 @@ def human_readable_payload(value_predict, run_id) -> Dict:
     return result
 
 
-def predict(pX: dict, run_id: str) -> Dict:
+def predict(pX: dict, run_id: str, is_dict: bool = True) -> Dict:
     """Takes weight and predicts height
 
     Args:
@@ -58,7 +58,10 @@ def predict(pX: dict, run_id: str) -> Dict:
     """
 
     model = load_model(run_id)
-    df = pd.DataFrame(pX)
+    if is_dict:
+        df = pd.DataFrame(pX)
+    else:
+        df = pX
     prediction = model.predict(df)
 
     result = human_readable_payload(prediction, run_id)

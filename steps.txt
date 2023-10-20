@@ -24,6 +24,8 @@ pre-commit run --all-files
 
 # crear test file
 
+# $env:PYTHONPATH = "$env:PYTHONPATH;$PWD"
+
 mlflow server --backend-store-uri sqlite:///mlflow.db
 prefect server start
 
@@ -31,3 +33,6 @@ prefect server start
 python -m pip install "mkdocstrings[python]"
 python -m mkdocs serve
 mkdocs build
+
+
+docker-compose up
