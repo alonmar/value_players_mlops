@@ -8,7 +8,7 @@ from models import data_cleaning
 
 @task(log_prints=True)
 def clean_data(
-    df: pd.DataFrame, tsize=0.2
+    df: pd.DataFrame, tsize: float = 0.2
 ) -> tuple[
     Annotated[pd.DataFrame, "X_train"],
     Annotated[pd.DataFrame, "X_test"],
@@ -20,15 +20,15 @@ def clean_data(
     splits the data into training and testing sets, and returns the resulting DataFrames and Series.
 
     Args:
-    - df: pandas DataFrame containing the data to be cleaned and split.
-    - tsize: float value representing the proportion of the data to be used for testing. Default is 0.2.
+        df: pandas DataFrame containing the data to be cleaned and split.
+        tsize: float value representing the proportion of the data to be used for testing. Default is 0.2.
 
     Returns:
-    - tuple containing the following DataFrames and Series:
-        - X_train: pandas DataFrame containing the training data.
-        - X_test: pandas DataFrame containing the testing data.
-        - y_train: pandas Series containing the target values for the training data.
-        - y_test: pandas Series containing the target values for the testing data.
+        tuple: containing the following DataFrames and Series:
+            X_train: pandas DataFrame containing the training data.
+            X_test: pandas DataFrame containing the testing data.
+            y_train: pandas Series containing the target values for the training data.
+            y_test: pandas Series containing the target values for the testing data.
     """
 
     df = df.dropna().copy()
