@@ -1,0 +1,18 @@
+site_name: Value player
+#site_url: https://github.com/alonmar/Fifa-players-predict-value/blob/main/Makefile
+repo_url: https://github.com/alonmar/value_players_mlops
+nav:
+  - Home: index.md
+  - Value Players:
+    - Ingest data: ingest_data.md
+    - Clean data: clean_data.md
+    - Process clean data: data_cleaning.md
+    - Train model: model_train.md
+    - dev Train model: model_dev.md
+    - Evaluate model: evaluation.md
+
+theme: 'material'
+plugins:
+  - mkdocstrings
+watch:
+  - .  # reload docs for any file changes
