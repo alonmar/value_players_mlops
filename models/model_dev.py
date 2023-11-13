@@ -1,11 +1,11 @@
 # Models
-from xgboost import XGBRegressor
 import pandas as pd
+from sklearn.base import RegressorMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, StandardScaler
-from sklearn.base import RegressorMixin
+from xgboost import XGBRegressor
 
 
 def data_pipline(X_train: pd.DataFrame) -> ColumnTransformer:

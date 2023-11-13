@@ -1,9 +1,9 @@
 # Data management
-import pandas as pd
+from typing import Annotated
+
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
-from typing import Tuple
-from typing_extensions import Annotated
 
 
 def change_data_types(df: pd.DataFrame) -> pd.DataFrame:
@@ -91,7 +91,7 @@ def one_hot_coding(df: pd.DataFrame) -> pd.DataFrame:
 
 def split_data(
     df: pd.DataFrame, tsize: float
-) -> Tuple[
+) -> tuple[
     Annotated[pd.DataFrame, "X_train"],
     Annotated[pd.DataFrame, "X_test"],
     Annotated[pd.Series, "y_train"],

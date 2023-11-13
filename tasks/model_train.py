@@ -1,19 +1,19 @@
-from models import model_dev
+import json
+from typing import Annotated
+
+import mlflow
+import pandas as pd
+from prefect import get_run_logger, task
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
-import mlflow
-from prefect import task
-import json
-from typing import Dict
-import pandas as pd
-from typing_extensions import Annotated
+
+from models import model_dev
 
 # from tasks.config import logger, PARAMETERS_PATH
 from tasks.config import PARAMETERS_PATH
-from prefect import get_run_logger
 
 
-def load_parametres() -> Dict:
+def load_parametres() -> dict:
     """Load parameters from json file"""
     parameters_path = PARAMETERS_PATH
     f = open(parameters_path)

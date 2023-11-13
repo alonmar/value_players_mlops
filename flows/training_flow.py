@@ -1,8 +1,9 @@
+from prefect import flow
+
 from tasks.clean_data import clean_data
 from tasks.evaluation import evaluation
 from tasks.ingest_data import ingest_data
 from tasks.model_train import model_train_best_parameters
-from prefect import flow
 
 
 @flow

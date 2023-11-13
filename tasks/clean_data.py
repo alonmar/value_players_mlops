@@ -1,14 +1,15 @@
-from prefect import task
+from typing import Annotated
+
 import pandas as pd
+from prefect import task
+
 from models import data_cleaning
-from typing import Tuple
-from typing_extensions import Annotated
 
 
 @task(log_prints=True)
 def clean_data(
     df: pd.DataFrame, tsize=0.2
-) -> Tuple[
+) -> tuple[
     Annotated[pd.DataFrame, "X_train"],
     Annotated[pd.DataFrame, "X_test"],
     Annotated[pd.Series, "y_train"],

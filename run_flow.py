@@ -1,6 +1,6 @@
-from flows.training_flow import train_pipeline
 import mlflow
 
+from flows.training_flow import train_pipeline
 
 if __name__ == "__main__":
     # MLflow settings

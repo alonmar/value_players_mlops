@@ -1,12 +1,11 @@
-from prefect import task
 import mlflow
-from sklearn.pipeline import Pipeline
-import pandas as pd
-from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
+import pandas as pd
 
 # from tasks.config import logger
-from prefect import get_run_logger
+from prefect import get_run_logger, task
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.pipeline import Pipeline
 
 
 @task(log_prints=True)
