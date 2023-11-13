@@ -13,6 +13,15 @@ repos:
         exclude: "notebooks"
     -   id: check-yaml
         exclude: "mkdocs.yml"
+- repo: https://github.com/asottile/pyupgrade
+  rev: v3.15.0
+  hooks:
+  -   id: pyupgrade
+      args: [--py310-plus]
+- repo: https://github.com/pycqa/isort
+  rev: 5.12.0
+  hooks:
+    - id: isort
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
   rev: v0.1.1
