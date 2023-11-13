@@ -14,7 +14,12 @@ from tasks.config import PARAMETERS_PATH
 
 
 def load_parametres() -> dict:
-    """Load parameters from json file"""
+    """
+    Load parameters from a JSON file and log it as an artifact in MLflow.
+
+    Returns:
+        dict: A dictionary containing the loaded parameters.
+    """
     parameters_path = PARAMETERS_PATH
     f = open(parameters_path)
     parameters = json.load(f)
@@ -27,14 +32,15 @@ def load_parametres() -> dict:
 def model_train_best_parameters(
     X_train: pd.DataFrame, y_train: pd.Series
 ) -> Annotated[Pipeline, "model"]:
-    """train a model with best hyperparams and write everything out
+    """
+    Trains a machine learning model using the best parameters found through RandomizedSearchCV.
 
     Args:
-        X_train (_type_): _description_
-        y_train (_type_): _description_
+        X_train (pd.DataFrame): The training data.
+        y_train (pd.Series): The target variable for the training data.
 
     Returns:
-        Pipeline: _description_
+        Pipeline: The trained machine learning model pipeline.
     """
 
     mlflow.start_run()

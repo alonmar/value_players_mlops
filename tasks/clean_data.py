@@ -15,6 +15,22 @@ def clean_data(
     Annotated[pd.Series, "y_train"],
     Annotated[pd.Series, "y_test"],
 ]:
+    """
+    This function receives a pandas DataFrame and a test size value, performs some data cleaning operations,
+    splits the data into training and testing sets, and returns the resulting DataFrames and Series.
+
+    Args:
+    - df: pandas DataFrame containing the data to be cleaned and split.
+    - tsize: float value representing the proportion of the data to be used for testing. Default is 0.2.
+
+    Returns:
+    - tuple containing the following DataFrames and Series:
+        - X_train: pandas DataFrame containing the training data.
+        - X_test: pandas DataFrame containing the testing data.
+        - y_train: pandas Series containing the target values for the training data.
+        - y_test: pandas Series containing the target values for the testing data.
+    """
+
     df = df.dropna().copy()
     df = data_cleaning.change_data_types(df)
     df = data_cleaning.get_position_zone(df)

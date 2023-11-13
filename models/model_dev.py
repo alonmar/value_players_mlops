@@ -9,6 +9,18 @@ from xgboost import XGBRegressor
 
 
 def data_pipline(X_train: pd.DataFrame) -> ColumnTransformer:
+    """
+    This function creates a data pipeline for preprocessing the input data.
+    It scales the numerical variables using MinMaxScaler, imputes missing values using mean strategy,
+    and one-hot encodes the categorical variables using OneHotEncoder with handle_unknown='ignore' parameter.
+
+    Args:
+        X_train: A pandas DataFrame containing the training data.
+
+    Returns:
+        A ColumnTransformer object that can be used to transform the input data.
+    """
+
     # Para el escalado de las variables numericas usaremos MinMaxScaler
     # y como lo mensionamos anterirormente usaremos el promedio para la imputación
     numeric_pipeline = Pipeline(
@@ -38,6 +50,19 @@ def data_pipline(X_train: pd.DataFrame) -> ColumnTransformer:
 
 
 def model_select(model_name: str) -> RegressorMixin:
+    """
+    Selects a regressor model based on the given model_name.
+
+    Args:
+        model_name (str): The name of the model to select.
+
+    Returns:
+        RegressorMixin: The selected regressor model.
+
+    Raises:
+        ValueError: If the model_name is not supported.
+    """
+
     if model_name == "XGBRegressor":
         model = XGBRegressor(seed=20)
     else:

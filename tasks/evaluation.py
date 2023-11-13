@@ -10,6 +10,19 @@ from sklearn.pipeline import Pipeline
 
 @task(log_prints=True)
 def evaluation(X_test: pd.DataFrame, y_test: pd.Series, model: Pipeline) -> None:
+    """
+    Evaluates the performance of a given model by calculating the mean squared error, r2 score, and root mean squared error
+    using the provided test data. The results are logged using MLflow and the logger provided by get_run_logger().
+
+    Args:
+        X_test (pd.DataFrame): The test data features.
+        y_test (pd.Series): The test data target values.
+        model (Pipeline): The trained model to evaluate.
+
+    Returns:
+        None
+    """
+
     logger = get_run_logger()
 
     predictions = model.predict(X_test)
