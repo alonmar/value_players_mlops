@@ -13,6 +13,7 @@ Lista de requisitos o dependencias necesarias para ejecutar el proyecto.
 ```shell
 virtualenv venv
 .\venv\Scripts\activate
+pip install -r  requirements.txt
 ```
 
 ## Inicialización de Git y DVC
@@ -81,7 +82,7 @@ mkdocs build
 python -m mkdocs serve
 ```
 
-# Docker
+## Docker
 
 ```
 docker-compose up
