@@ -48,7 +48,7 @@ def model_train_best_parameters(
     # Read parametres
     parameters = load_parametres()
 
-    # pipline
+    # pipeline
     full_processor = model_dev.data_pipline(X_train)
 
     model_select = model_dev.model_select("XGBRegressor")

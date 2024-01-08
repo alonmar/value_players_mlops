@@ -84,6 +84,17 @@ python -m mkdocs serve
 
 ## Docker
 
+En caso de ser necesario se crea un contenedor con un
+servicio de POSTGRES para simular el monitoreo de consumo
+del modelo
 ```
+cd monitoring
 docker-compose up
+```
+
+Ejecutamos el siguiente archivo para simular la el uso
+de la api
+
+```
+python monitoring/dummy_metrics_calculation.py
 ```
