@@ -2,11 +2,9 @@
 
 ## Description
 
-Breve descripción del proyecto.
 
-## Requisitos
+The objective of this project is to serve as a template for the use of MLOps. It will manage version control of both the code and the data, establish a workflow for training and retraining, as well as for obtaining metrics and versioning the model. CI/CD and unit tests will be applied. All of the above will be orchestrated and served via an API.
 
-Lista de requisitos o dependencias necesarias para ejecutar el proyecto.
 
 ## Environment Setup
 
