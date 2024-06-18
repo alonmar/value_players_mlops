@@ -1,6 +1,6 @@
-# Nombre del Proyecto
+# Value players mlops
 
-## Descripción
+## Description
 
 Breve descripción del proyecto.
 
@@ -8,7 +8,7 @@ Breve descripción del proyecto.
 
 Lista de requisitos o dependencias necesarias para ejecutar el proyecto.
 
-## Configuración del entorno
+## Environment Setup
 
 ```shell
 virtualenv venv
@@ -16,7 +16,7 @@ virtualenv venv
 pip install -r  requirements.txt
 ```
 
-## Inicialización de Git y DVC
+## Git and DVC Initialization
 
 ```
 git init
@@ -24,9 +24,9 @@ dvc init
 dvc remote add -d dvc-remote ./.dvc/tmp/dvc-storage
 ```
 
-### Actualización de datos
+### Data Update
 
-Cada vez que se realiza un cambio en el dataset, ejecuta los siguientes comandos:
+Each time there is a change in the dataset, execute the following commands:
 
 ```
 dvc add ./data/data_fifa_players.json
@@ -37,7 +37,7 @@ git commit -m "Add raw data"
 
 ## Pre-commit
 
-pre-commit se ejecutará automáticamente cada vez que intentes hacer un commit en git. Si pre-commit encuentra algún problema en los archivos que estás intentando commitear, detendrá el commit y te mostrará los problemas para que puedas corregirlos.
+Pre-commit will automatically run each time you try to make a commit in git. If pre-commit finds any issues in the files you are trying to commit, it will stop the commit and show you the issues so you can fix them.
 
 ```
 # install pre-commit
@@ -48,13 +48,18 @@ pre-commit install
 pre-commit run --all-files
 ```
 
-## Pruebas
+## Tests
 
-Descripción de cómo ejecutar las pruebas.
+If you want to run test
 
-## Servidor MLFlow
+```
+pytest
+```
 
-Iniciar server de mlflow
+
+## MLFlow Server
+
+Start the MLFlow server
 
 ```
 mlflow server --backend-store-uri sqlite:///mlflow.db
@@ -62,15 +67,15 @@ mlflow server --backend-store-uri sqlite:///mlflow.db
 
 ## Servidor Prefect
 
-Iniciar server de prefect
+Start the Prefect server
 
 ```
 prefect server start
 ```
 
-## Documentación
+## Documentation
 
-Construimos la documentación
+Build the documentation
 
 ```
 python -m pip install "mkdocstrings[python]"
@@ -80,20 +85,19 @@ mkdocs new valueplayers_docs
 mkdocs build
 # run mkdocs server
 python -m mkdocs serve
+# visit http://127.0.0.1:8000/
 ```
 
 ## Docker
 
-En caso de ser necesario se crea un contenedor con un
-servicio de POSTGRES para simular el monitoreo de consumo
-del modelo
+If necessary, create a container with a POSTGRES service to simulate model consumption monitoring.
+
 ```
 cd monitoring
 docker-compose up
 ```
 
-Ejecutamos el siguiente archivo para simular la el uso
-de la api
+Run the following file to simulate API usage
 
 ```
 python monitoring/dummy_metrics_calculation.py
